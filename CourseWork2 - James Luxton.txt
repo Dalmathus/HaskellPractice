@@ -1,0 +1,70 @@
+{-James Luxton 1190809 Course Work 2 Comp 313-}
+
+module Hugs where
+
+{-Added deriving Show hope this was allowed it was the easiest way to show output, 
+also The tree doesnt havve a value on root which is odd-}
+data Tree a = Node (Tree a) (Tree a) | Leaf a deriving (Show)
+
+data Expr = C Float | Expr :+ Expr | Expr :- Expr | Expr :* Expr | Expr :/ Expr | V String | Let Char
+
+{-Split a int array leavign the larger half on the right-}
+halve :: [a] -> ([a],[a])
+halve xs = (take (length xs `div` 2) xs, drop (length xs `div` 2) xs)
+
+{-Split and sort one array of integers-}
+meld :: [Int] -> [Int] -> [Int]
+meld [] xs = xs
+meld xs [] = xs
+meld (x:xs) (y:ys) 
+	| (x < y) = x:meld xs (y:ys)
+	| otherwise = y:meld (x:xs) ys
+
+{- Merge Sort, with only one split-}
+integerSort :: [Int] -> [Int]
+integerSort [] = []
+integerSort xs 
+	| (length xs) > 1 = meld (integerSort ls) (integerSort rs)
+	| otherwise = xs
+	where (ls, rs) = halve xs
+
+{-Loop creating a list of equal values-}
+replicate :: Int -> a -> [a]
+replicate x y = [y | r <- [1..x]]
+
+{-Q5. map f.filter p xs-}
+
+{-use of foldl to concat integers-}
+d2i :: [Int] -> Int
+d2i xs = foldl (\inc x -> (inc * 10) + x) 0 xs
+
+{-Q7.
+i)		List has two different data types contained inside char and int
+ii)		List has two different data types contained inside operations and int
+iii)	List only contains liek terms however the tuples inside do not contain like terms
+iv)		You cannot run length on a tuple it must be on a list object
+-}		
+
+{-Will produce tuples at the root o each tree node have not figured out different sizes yet-}
+zip' :: Tree a -> Tree b -> Tree (a,b)
+zip' (Leaf a) (Leaf b) = Leaf (a,b)
+zip' (Node left1 right1) (Node left2 right2) = 
+    let l = zip' left1 left2
+        r = zip' right1 right2 
+    in Node l r 
+
+{-Will sum the tuples must be privided Integer values obviously to compile-}
+zipWidth' :: Tree Integer -> Tree Integer -> Tree Integer
+zipWidth' (Leaf a) (Leaf b) = Leaf (sum [a,b])
+zipWidth' (Node left1 right1) (Node left2 right2) = 
+    let l = zipWidth' left1 left2
+        r = zipWidth' right1 right2 
+    in Node l r 
+
+{-Runs arithmetic operations on two Expressions-}
+evaluate :: Expr -> Float
+evaluate (C x) = x
+evaluate (e1 :+ e2) = (evaluate e1) + (evaluate e2)
+evaluate (e1 :- e2) = (evaluate e1) - (evaluate e2)
+evaluate (e1 :* e2) = (evaluate e1) * (evaluate e2)
+evaluate (e1 :/ e2) = (evaluate e1) / (evaluate e2)

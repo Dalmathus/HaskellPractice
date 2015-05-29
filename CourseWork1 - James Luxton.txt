@@ -1,0 +1,98 @@
+module Hugs where
+
+import Char
+
+{- 
+
+James Luxton 1190809 3/3/2015 12:08am
+
+Questions 1 - 5
+
+1.
+	a)	:t twice
+		twice :: (a -> a) -> a -> a
+
+	b)	twice not False
+		False
+
+	c)	:t square
+		square :: Num a => a -> a	
+	
+	d)	:t twice square
+		twice square :: Num a => a -> a		
+
+	e)	twice square 5
+		625
+
+	f)	:t head
+		head :: [a] -> a
+
+	g)	:t head naturals
+		head naturals :: Integer
+	
+	h)	head naturals
+		0
+2.
+	:t (3 *)
+	(3 *) :: Num a => a -> a
+	Num a => indicatcates that only a value of the numerical type may be passed into this function
+3.	
+	(* 3) has the value of the result of the following function multiplied by three if it is numerical.
+4.
+	3 (square 3)
+	81
+5.
+	map (2 *) naturals
+-}
+
+twice :: (a -> a) -> a -> a
+twice f x = f (f x)
+
+square :: Num a => a -> a
+square n = n * n
+
+naturals :: [Integer]
+naturals = [0..]
+
+ones :: [Integer]
+ones = 1 : ones
+
+-- Question 6
+capitalize :: Char -> Char
+capitalize x = if ord x >= 97 || ord x <= 122 then toUpper x else x
+
+-- Question 6 with guards
+capitalize' :: Char -> Char
+capitalize' x	
+	| ord x >= 97 || ord <= 122 = toUpper x
+	| otherwise = x
+
+-- Question 7
+capitalize_string :: String -> String
+capitalize_string x = map capitalize x
+
+-- Question 8
+or_list :: [Bool] -> Bool
+or_list xs = foldr (||) False xs
+
+-- Question 9
+flock :: Integer -> String
+flock x = concat ["sheep\n" | r <- [1..x]]
+
+-- Question 10
+flock2 :: Integer -> String
+flock2 x  = if x > 0 then concat [ "sheep\n" , flock2 (x - 1)] else ""
+
+-- Question 10 with guards
+flock2' :: Integer -> String
+flock2' x 
+	| x > 0 = concat [ "sheep\n", flock2' (x - 1)]
+	| otherwise = ""
+
+-- Question 11
+a_row_of_sheep :: Integer -> String
+a_row_of_sheep x = concat ["sheep " | r <- [1..x]]
+
+-- Question 12
+big_flock :: Integer -> String
+big_flock x = concat [concat [a_row_of_sheep r, "\n"]| r <- [1..x]]
